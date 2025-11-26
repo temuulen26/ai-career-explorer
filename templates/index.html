@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Career Explorer</title>
+  <style>
+    body { font-family: sans-serif; background: #f2f2f2; }
+    #chat { max-width: 600px; margin: 50px auto; padding: 20px; background: white; border-radius: 10px; }
+    .message { margin: 10px 0; }
+    .user { text-align: right; color: blue; }
+    .bot { text-align: left; color: green; }
+    input { width: 80%; padding: 10px; }
+    button { padding: 10px; }
+  </style>
+</head>
+<body>
+  <div id="chat"></div>
+  <div style="text-align:center;">
+    <input type="text" id="input" placeholder="Асуулт бичнэ үү..." />
+    <button onclick="sendMessage()">Илгээх</button>
+  </div>
+
+  <script>
+    const chat = document.getElementById('chat');
+    const input = document.getElementById('input');
+
+    async function sendMessage() {
+      const message = input.value;
+      if (!message) return;
+
+      addMessage(message, 'user');
+      input.value = '';
+
+      const response = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message })
+      });
+
+      const data = await response.json();
+      addMessage(data.reply, 'bot');
+    }
+
+    function addMessage(text, role) {
+      const div = document.createElement('div');
+      div.className = 'message ' + role;
+      div.innerText = text;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+  </script>
+</body>
+</html>
